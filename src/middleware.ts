@@ -8,5 +8,6 @@ export const config = {
     "/api/env/:path*",
     "/api/github/:path*",
     "/api/share",
+    "/api/repos",
   ],
 };

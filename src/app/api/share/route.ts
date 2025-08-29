@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const schema = z.object({
   minutes: z.number().int().positive().max(60).default(10),
-  repoFullName: z.string().optional(),
+  repoId: z.string().optional(),
   name: z.string().optional(),
 });
 
@@ -20,17 +20,16 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success)
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-  const { minutes, repoFullName, name } = parsed.data;
+  const { minutes, repoId, name } = parsed.data;
 
-  let repoId: string | undefined = undefined;
-  if (repoFullName) {
+  // Validate repoId if provided
+  if (repoId) {
     const repo = await prisma.repo.findFirst({
-      where: { fullName: repoFullName, ownerId: userId },
+      where: { id: repoId, ownerId: userId },
     });
     if (!repo) {
       return NextResponse.json({ error: "Repo not found" }, { status: 404 });
     }
-    repoId = repo.id;
   }
 
   const token = crypto.randomUUID().replace(/-/g, "");

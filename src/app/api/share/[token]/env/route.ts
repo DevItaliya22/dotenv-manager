@@ -3,10 +3,12 @@ import { prisma } from "../../../../../lib/prisma";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
+  const { token } = await params;
+
   const share = await prisma.shareLink.findUnique({
-    where: { token: params.token },
+    where: { token },
     select: { ownerId: true, repoId: true, expiresAt: true },
   });
   if (!share) return new NextResponse("Not found", { status: 404 });
