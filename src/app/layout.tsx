@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
+import { ThemeProvider } from "../components/theme-provider";
+import { ModeToggle } from "../components/mode-toggle";
+import { LogoutButton } from "../components/logout-button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +27,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        {children}
+        <ThemeProvider>
+          <div className="flex min-h-screen">
+            <aside className="w-60 border-r p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <Link href="/" className="font-semibold">
+                  Dotenv Manager
+                </Link>
+                <ModeToggle />
+              </div>
+              <nav className="mt-4 grid gap-1 text-sm">
+                <Link
+                  href="/repos"
+                  className="rounded px-2 py-1 hover:bg-accent"
+                >
+                  Repos
+                </Link>
+                <Link
+                  href="/share"
+                  className="rounded px-2 py-1 hover:bg-accent"
+                >
+                  Share Links
+                </Link>
+              </nav>
+              <LogoutButton />
+            </aside>
+            <main className="flex-1 p-6">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
